@@ -111,7 +111,7 @@ app.post("/apply", upload.single("passport"), async (req, res) => {
 Student ID: ${studentId}
 Password: ${passwordPlain}
 
-Login here: http://localhost:5000`,
+Login here: http://localhost:5000`
     });
 
     res.json({
