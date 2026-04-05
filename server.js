@@ -34,15 +34,17 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
 // ================= APPLICATION =================
 app.post("/apply", upload.single("passport"), async (req, res) => {
-  const data = req.body;
-  const reference = data.reference;
 
-  try {
-   
-    // VERIFY PAYMENT
-    const verify = await axios.get(
+const data = req.body
+const reference = data.reference
+
+try{
+
+// VERIFY PAYMENT
+const verify = await axios.get(
   `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${reference}`,
 {
 headers:{
