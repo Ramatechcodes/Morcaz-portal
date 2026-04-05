@@ -55,73 +55,87 @@ app.post("/apply", upload.single("passport"), async (req, res) => {
 
     // VERIFY PAYMENT
     const verify = await axios.get(
-      `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${reference}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.FLUTTERWAVE_SECRET}`,
-        },
-      }
-    );
+  `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${reference}`,
+{
+headers:{
+Authorization:`Bearer ${process.env.FLUTTERWAVE_SECRET}`
+}
+})
 
-    if (verify.data.status !== "success") {
-      return res.json({ message: "Payment not verified" });
-    }
+if(verify.data.status !== "success"){
+return res.json({message:"Payment not verified"})
+}
 
-    // Upload passport
-    let passportUrl = null;
-    if (req.file) {
-      const fileName = Date.now() + "_" + req.file.originalname;
+// Upload passport
+let passportUrl=null
 
-      await supabase.storage.from("passports").upload(fileName, req.file.buffer);
+if(req.file){
+const fileName=Date.now()+"_"+req.file.originalname
 
-      passportUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/passports/${fileName}`;
-    }
+await supabase.storage
+.from("passports")
+.upload(fileName,req.file.buffer)
 
-    // Generate Student ID & password
-    const studentId = "MRZ" + Math.floor(10000 + Math.random() * 90000);
-    const passwordPlain = Math.random().toString(36).slice(-8);
-    const hashed = await bcrypt.hash(passwordPlain, 10);
+passportUrl=`${process.env.SUPABASE_URL}/storage/v1/object/public/passports/${fileName}`
+}
 
-    // Save new student
-    await supabase.from("students").insert([
-      {
-        full_name: data.name,
-        email: data.email,
-        phone: data.phone,
-        nin: data.nin,
-        state_origin: data.origin,
-        state_residence: data.residence,
-        previous_school: data.prevschool,
-        class_applying: data.class,
-        parent_name: data.parent,
-        passport: passportUrl,
-        student_id: studentId,
-        password: hashed,
-        payment_status: true,
-      },
-    ]);
+// Generate ID
+const studentId="MRZ"+Math.floor(10000+Math.random()*90000)
 
-    // SEND EMAIL
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: data.email,
-      subject: "Morcaz Uloom Student Portal Login",
-      text: `Welcome to Morcaz Uloom Portal
+// Generate password
+const passwordPlain=Math.random().toString(36).slice(-8)
+
+const hashed=await bcrypt.hash(passwordPlain,10)
+
+// Save student
+await supabase.from("students").insert([{
+
+full_name:data.name,
+email:data.email,
+phone:data.phone,
+nin:data.nin,
+state_origin:data.origin,
+state_residence:data.residence,
+previous_school:data.prevschool,
+class_applying:data.class,
+parent_name:data.parent,
+passport:passportUrl,
+student_id:studentId,
+password:hashed,
+payment_status:true
+
+}])
+
+// SEND EMAIL
+await transporter.sendMail({
+
+from:process.env.EMAIL_USER,
+to:data.email,
+subject:"Morcaz Uloom Student Portal Login",
+
+text:`Welcome to Morcaz Uloom Portal
 
 Student ID: ${studentId}
 Password: ${passwordPlain}
 
-Login here: http://localhost:5000`
-    });
+Login here:
+http://localhost:5000`
 
-    res.json({
-      message: "Application successful. Login details sent to email.",
-    });
-  } catch (err) {
-    console.log(err);
-    res.json({ message: "Application failed" });
-  }
-});
+})
+
+res.json({
+message:"Application successful. Login details sent to email."
+})
+
+}catch(err){
+
+console.log(err)
+
+res.json({message:"Application failed"})
+
+}
+
+})
 // ================= PAYMENT VERIFY =================
 app.post("/verify-payment", async (req, res) => {
   const { reference, email } = req.body;
