@@ -92,7 +92,9 @@ const passwordPlain=Math.random().toString(36).slice(-8)
 const hashed=await bcrypt.hash(passwordPlain,10)
 
 // Save student
-await supabase.from("students").insert([{
+const { error: insertError } = await supabase
+  .from("students")
+  .insert([{
 
 full_name:data.name,
 email:data.email,
@@ -121,7 +123,7 @@ Student ID: ${studentId}
 Password: ${passwordPlain}
 
 Login here: 
-http://localhost:5000`
+http://morcaz-uloom-ejigbo-ng.onrender.com`
 
 })
 
