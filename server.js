@@ -109,7 +109,7 @@ Student ID: ${studentId}
 Password: ${passwordPlain}
 
 Login here:
-http://localhost:5000`
+https://morcaz-uloom-ejigbo-ng.onrender.com`
 
 })
 
