@@ -40,19 +40,7 @@ app.post("/apply", upload.single("passport"), async (req, res) => {
   const reference = data.reference;
 
   try {
-    // Check if student already exists (by email or NIN)
-    const { data: existing, error } = await supabase
-      .from("students")
-      .select("*")
-      .or(`email.eq.${data.email},nin.eq.${data.nin}`)
-      .maybeSingle();
-
-    if (existing) {
-      return res.json({
-        message: "You have already applied. Use your Student ID to login."
-      });
-    }
-
+   
     // VERIFY PAYMENT
     const verify = await axios.get(
   `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${reference}`,
