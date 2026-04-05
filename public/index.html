@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Morcaz Uloom E-Portal</title>
+
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+
+
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+}
+
+/* TOP BAR */
+
+.topbar{
+background:#001f6b;
+color:white;
+padding:8px;
+font-size:14px;
+display:flex;
+justify-content:space-between;
+padding-left:20px;
+padding-right:20px;
+}
+
+/* HEADER */
+
+header{
+background:#0a2aa1;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:10px 30px;
+color:white;
+}
+
+header img{
+height:50px;
+}
+
+.menu{
+display:flex;
+gap:25px;
+font-weight:bold;
+}
+
+.menu a{
+cursor:pointer;
+color:white;
+text-decoration:none;
+}
+
+.menu a:hover{
+text-decoration:underline;
+}
+
+/* HERO SLIDER */
+
+.hero{
+height:400px;
+position:relative;
+overflow:hidden;
+}
+
+.hero img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* SECTION */
+
+section{
+display:none;
+padding:40px;
+}
+
+#home{
+display:block;
+}
+
+/* CARD */
+
+.card{
+background:white;
+padding:20px;
+border-radius:6px;
+box-shadow:0 0 10px #ccc;
+color: black;
+}
+
+/* LOGIN */
+
+.login-box{
+max-width:400px;
+margin:auto;
+background:white;
+padding:25px;
+box-shadow:0 0 10px #ccc;
+}
+
+input,select,button{
+width:100%;
+padding:10px;
+margin-top:10px;
+}
+.about{
+    color:black;
+    font-weight: bold;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+button{
+background:#0a2aa1;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+/* DASHBOARD */
+
+.dashboard{
+display:flex;
+}
+
+.sidebar{
+width:230px;
+background:#0a2aa1;
+color:white;
+height:100vh;
+padding:20px;
+}
+
+.sidebar button{
+width:100%;
+margin-top:10px;
+background:#1d41d8;
+}
+
+.content{
+flex:1;
+padding:30px;
+}
+.lang-switch{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.switch{
+position:relative;
+display:inline-block;
+width:50px;
+height:24px;
+}
+
+.switch input{
+opacity:0;
+width:0;
+height:0;
+}
+
+.slider{
+position:absolute;
+cursor:pointer;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:#ccc;
+transition:.4s;
+border-radius:24px;
+}
+
+.slider:before{
+position:absolute;
+content:"";
+height:18px;
+width:18px;
+left:3px;
+bottom:3px;
+background:white;
+transition:.4s;
+border-radius:50%;
+}
+
+input:checked + .slider{
+background:#0a2aa1;
+}
+
+input:checked + .slider:before{
+transform:translateX(26px);
+}
+
+/* STUDENT CARD */
+
+.student-card{
+background:white;
+padding:20px;
+width:250px;
+text-align:center;
+box-shadow:0 0 10px #ccc;
+}
+
+.student-card img{
+width:120px;
+height:120px;
+object-fit:cover;
+}
+.founder{
+    background:white;
+    color: black;
+    font-weight: bold;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+td,th{
+border:1px solid #ccc;
+padding:10px;
+}
+/* POPUP STYLE */
+
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.popup-content{
+background:white;
+padding:30px;
+width:90%;
+max-width:450px;
+max-height:90vh;   /* VERY IMPORTANT */
+overflow-y:auto;   /* ENABLE SCROLL */
+text-align:center;
+border-radius:10px;
+position:relative;
+animation:fadeIn 0.5s ease;
+}
+.close-btn{
+position:sticky;   /* keeps it visible while scrolling */
+top:0;
+right:0;
+float:right;
+font-size:28px;
+font-weight:bold;
+cursor:pointer;
+color:red;
+background:white;
+padding:5px 10px;
+border-radius:50%;
+z-index:10000;
+}
+
+@keyframes fadeIn{
+from{transform:scale(0.8);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- TOP CONTACT BAR -->
+
+<div class="topbar">
+
+<div>
++234 817 129 5654 | info@morcazuloom.edu.ng
+</div>
+
+<div>
+Facebook | YouTube | Twitter
+</div>
+
+</div>
+
+<!-- HEADER -->
+
+<header>
+
+<div>
+<img src="logo.png">
+</div>
+
+
+<div class="menu">
+
+<a onclick="show('home')">Home</a>
+
+<a onclick="show('apply')">Apply</a>
+
+<a onclick="show('login')">Student Portal</a>
+<a onclick="show('cbt')">CBT Exam</a>
+<a onclick="show('staffLogin')">Staff Login</a>
+
+</div>
+
+<div class="lang-switch">
+
+<label class="switch">
+<input type="checkbox" id="langToggle">
+<span class="slider"></span>
+</label>
+
+<span id="langLabel">EN</span>
+
+</div>
+</header>
+
+
+<!-- HOME PAGE -->
+
+<section id="home">
+    
+
+<div class="hero">
+<img id="slide" src="pics1.jpg">
+<img src="stu.JPG" style="width:400px;border-radius:30px;">
+
+</div>
+<br>
+
+<div class="card">
+
+<h2>About Morcaz Uloom</h2>
+<img src="sch.jpg" style="width:300px;border-radius:30px">
+<img src="sch4.jpg" style="width:400px;border-radius:30px">
+<img src="pics3.jpg" style="width:400px;border-radius:30px;">
+<img src="pics1.jpg" style="width:400px;border-radius:30px;">
+<img src="pics2.jpg" style="width:400px;border-radius:30px;">
+<img src="sch3.jpg" style="width:400px;border-radius:30px;">
+
+
+
+
+<p class="about">
+    
+
+Morcaz Uloom Arabiyyat Islamiyyat Ejigbo Lagos was established in 1986 as a center of excellence for Islamic and Arabic studies.
+
+</p>
+
+<p class="about">
+
+The institution has produced thousands of graduates who have gone on to become respected scholars, teachers, and professionals.
+
+</p>
+
+<p class="about">
+
+The school combines traditional Islamic scholarship with modern educational practices to prepare students for leadership and service in society.
+
+</p>
+
+</div>
+<div class="founder">
+
+<h2>Founder</h2>
+
+<img src="founder4.jpg" style="width:400px;border-radius:30px">
+
+<h3 class="found">Sheikh Muizdeen Salmon Alawiye</h3>
+
+<p class="found">
+
+Sheikh Muizdeen Salmon Alawiye popularly known as Baba Legigbo is the founder of Morcaz Uloom Arabiyyat Islamiyyat Ejigbo Lagos.
+
+<br><br>For more than four decades he has dedicated his life to the teaching of the Qur'an, Arabic language and Islamic scholarship.
+
+<br><br>Thousands of students have graduated under his mentorship and are now scholars, teachers and community leaders in Nigeria and across the world.
+
+</p>
+
+</div>
+<div class="card">
+
+<h2 class="about">Our Vision</h2>
+
+<p class="about">
+
+Our vision is to build a world class Islamic and Arabic educational institution that nurtures knowledgeable, disciplined and morally upright individuals who will contribute <br> <br>positively to society.
+
+<br><br><br>
+We aim to combine traditional Islamic scholarship with modern academic excellence so that our students can compete globally while maintaining strong Islamic values.
+
+</p>
+
+</div>
+<div class="card">
+
+<h2 class="about">Our Mission</h2>
+
+<p class="about">
+
+Our mission is to provide high quality Islamic and Arabic education that empowers students with knowledge, character and leadership.
+
+<br><br>
+We strive to develop scholars who are grounded in the Qur'an and Sunnah while also equipping them with modern skills needed to succeed in today's world.
+
+</p>
+
+</div>
+<div class="card">
+
+<h2 class="about">School Locations</h2>
+
+<p class="about">
+
+Main Campus  
+22 Tajudeen Ogunseye Street  
+Ejigbo, Lagos State  
+Nigeria
+
+</p>
+
+<p class="about">
+
+Annex Campus  
+1 Kola Olukotun Street  
+Ejigbo, Lagos State  
+Nigeria
+
+</p>
+
+</div>
+
+<button onclick="show('apply')">Apply Now</button>
+
+<button onclick="show('login')">Student Portal Login</button>
+
+</div>
+
+<br>
+
+<iframe
+src="https://maps.google.com/maps?q=Ejigbo%20Lagos&t=&z=13&ie=UTF8&iwloc=&output=embed"
+width="100%"
+height="300"
+style="border:0">
+</iframe>
+
+</section>
+
+
+<!-- APPLICATION PAGE -->
+
+<section id="apply">
+
+<div class="card">
+
+<h2>Student Application Form</h2>
+
+<form id="applyForm">
+
+<input id="name" placeholder="Full Name">
+
+<input id="email" placeholder="Email">
+
+<select id="gender">
+
+<option>Male</option>
+<option>Female</option>
+
+</select>
+
+<input id="nin" placeholder="NIN">
+
+<input id="origin" placeholder="State of Origin">
+
+<input id="residence" placeholder="State of Residence">
+
+<input id="phone" placeholder="Phone Number">
+
+<input id="prevschool" placeholder="Previous School">
+
+<select id="class">
+
+<option>Ibtidaahi</option>
+<option>Idaadi</option>
+<option>Thanawi</option>
+<option>Taojeehi</option>
+
+</select>
+
+<input id="parent" placeholder="Parent / Guardian">
+
+<input type="file" id="passport">
+
+<button>Submit Application</button>
+
+</form>
+
+<div id="applyMsg"></div>
+
+</div>
+
+</section>
+<section id="cbt">
+
+<div class="login-box">
+
+<h2>CBT Login</h2>
+
+<input id="cbtID" placeholder="Student ID">
+<input id="cbtPass" type="password" placeholder="Password">
+
+<button onclick="cbtLogin()">Login</button>
+
+</div>
+
+<div id="cbtPanel" style="display:none">
+
+<h3>Select Class</h3>
+
+<select id="cbtClass">
+<option>Ibtidaahi</option>
+<option>Idaadi</option>
+<option>Thanawi</option>
+<option>Taojeehi</option>
+</select>
+
+<h3>Select Course</h3>
+
+<select id="cbtCourse">
+<option></option>
+<option>Tafsir</option>
+<option>Hadith</option>
+<option>Arabic Grammar</option>
+<option value="other">Others</option>
+</select>
+<input id="cbtOtherCourse" placeholder="Type course" style="display:none">
+
+<button onclick="startExam()">Start Exam</button>
+
+<div id="timer"></div>
+<div id="questionBox"></div>
+
+</div>
+
+</section>
+
+
+<!-- LOGIN PAGE -->
+
+<section id="login">
+
+<div class="login-box">
+
+<h2>Student Login</h2>
+
+<form id="loginForm">
+
+<input id="studentid" placeholder="Student ID">
+
+<input type="password" id="password" placeholder="Password">
+
+<button>Login</button>
+
+</form>
+
+</div>
+
+</section>
+
+<section id="staffLogin">
+
+<div class="login-box">
+
+<h2>Staff Login</h2>
+
+<input id="staffUser" placeholder="Username">
+<input id="staffPass" type="password" placeholder="Password">
+
+<button onclick="staffLogin()">Login</button>
+
+</div>
+<p style="margin-top:10px;">
+  Don't have an account? 
+  <a onclick="show('staffRegister')">Register here</a>
+</p>
+
+</section>
+<section id="staffRegister">
+
+<div class="login-box">
+  <h2>Staff Registration</h2>
+
+  <form id="staffRegisterForm">
+    <input id="staffFullName" placeholder="Full Name">
+    <input id="staffUsername" placeholder="Username">
+    <input id="staffCourse" placeholder="Course Assigned">
+
+    <button>Register</button>
+  </form>
+
+  <div id="staffRegisterMsg"></div>
+</div>
+<p style="margin-top:10px;">
+  Already registered? 
+  <a onclick="show('staffLogin')">Login here</a>
+</p>
+</section>
+<section id="staffDashboard">
+
+<div class="dashboard">
+
+<div class="sidebar">
+
+<h3>Staff Panel</h3>
+
+<button onclick="showStaff('staffHome')">Dashboard</button>
+
+<button onclick="showStaff('addQuestion')">Upload CBT Question</button>
+
+<button onclick="showStaff('addResult')">Upload Result</button>
+
+<button onclick="logout()">Logout</button>
+
+</div>
+
+<div class="content">
+
+<div id="staffHome">
+
+<h2>Staff Dashboard</h2>
+
+<p id="staffWelcome"></p>
+
+</div>
+
+
+<div id="addQuestion" style="display:none">
+
+<h2>Upload CBT Question</h2>
+
+<select id="qClass">
+<option>Ibtidaahi</option>
+<option>Idaadi</option>
+<option>Thanawi</option>
+<option>Taojeehi</option>
+</select>
+
+<select id="qCourse">
+<option>Fiqh</option>
+<option>Tafsir</option>
+<option>Hadith</option>
+<option>Arabic Grammar</option>
+<option value="other">Others</option>
+</select>
+
+<input id="newCourse" placeholder="Type course if Others selected" style="display:none">
+
+<div id="questionContainer"></div>
+
+<button onclick="addQuestion()">Add Question</button>
+
+<button onclick="uploadAllQuestions()">Upload All Questions</button>
+
+</div>
+
+
+<!-- ADD RESULT -->
+
+<div id="addResult" style="display:none">
+
+<h2>Upload Result</h2>
+
+<textarea id="resStudents" placeholder="Student IDs separated by comma"></textarea>
+
+<input id="resSubject" placeholder="Subject">
+
+<select id="resClass">
+<option>Ibtidaahi</option>
+<option>Idaadi</option>
+<option>Thanawi</option>
+<option>Taojeehi</option>
+</select>
+
+<select id="resSession">
+<option>2024/2025</option>
+<option>2025/2026</option>
+</select>
+
+<select id="resTerm">
+<option>First</option>
+<option>Second</option>
+<option>Third</option>
+</select>
+
+<input id="resScore" placeholder="Score">
+
+<button onclick="uploadResult()">Upload Result</button>
+
+</div>
+</div>
+</div>
+
+</section>
+
+
+<!-- DASHBOARD -->
+
+<section id="dashboard">
+
+<div class="dashboard">
+
+<div class="sidebar">
+
+<h3>Menu</h3>
+
+<button onclick="showDash('homeDash')">Dashboard</button>
+
+<button onclick="showDash('academics')">Academics</button>
+
+<button onclick="showDash('payments')">Payments</button>
+
+<button onclick="showDash('user')">User Menu</button>
+
+</div>
+
+<div class="content">
+
+<div id="homeDash">
+
+<div class="student-card">
+
+<img id="passportDisplay">
+<p>Class: <span id="studentClass"></span></p>
+<p>Email: <span id="studentEmail"></span></p>
+
+<h3 id="studentName"></h3>
+
+<p>ID: <span id="studentID"></span></p>
+
+</div>
+
+</div>
+
+<!-- ACADEMICS -->
+<div id="academics" style="display:none">
+
+<h2>Academics</h2>
+
+<button onclick="showAcademic('courses')">Course Registration</button>
+<button onclick="showAcademic('results')">Check Result</button>
+
+<div id="courses" style="display:none">
+
+<h3>Course Registration</h3>
+
+<form id="courseForm">
+
+<label><input type="checkbox" value="Qur'an"> Qur'an</label>
+<label><input type="checkbox" value="Arabic Grammar"> Arabic Grammar</label>
+<label><input type="checkbox" value="Fiqh"> Fiqh</label>
+<label><input type="checkbox" value="Hadith"> Hadith</label>
+<label><input type="checkbox" value="Tafsir"> Tafsir</label>
+<label><input type="checkbox" value="Islamic History"> Islamic History</label>
+<label><input type="checkbox" value="Balagha"> Balagha</label>
+<label><input type="checkbox" value="Nahwu"> Nahwu</label>
+
+<button>Register Courses</button>
+
+</form>
+
+<div id="coursesList"></div>
+
+<button onclick="printCourses()">Print Course Form</button>
+
+</div>
+
+
+<div id="results" style="display:none">
+
+<h3>Check Result</h3>
+
+<select id="session">
+<option>2024/2025</option>
+<option>2025/2026</option>
+</select>
+
+<select id="semester">
+<option>First</option>
+<option>Second</option>
+<option>Second</option>
+</select>
+
+<button onclick="checkResult()">Check Result</button>
+
+<div id="resultBox"></div>
+
+</div>
+
+</div>
+<!-- PAYMENTS -->
+
+<div id="payments" style="display:none">
+
+<h2>Payments</h2>
+
+<select onchange="paymentType(this.value)">
+
+<option>School Fees</option>
+<option>Other Payments</option>
+<option>Payment History</option>
+
+</select>
+
+<div id="paymentBox"></div>
+
+</div>
+
+
+<!-- USER MENU -->
+
+<div id="user" style="display:none">
+
+<h2>User Menu</h2>
+
+<button onclick="showChangePassword()">Change Password</button>
+
+<button onclick="logout()">Logout</button>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ANNIVERSARY POPUP -->
+<div id="anniversaryPopup" class="popup">
+
+  <div class="popup-content">
+
+    <span class="close-btn" onclick="closePopup()">×</span>
+
+    <h1>🎉 40 Years Anniversary 🎉</h1>
+
+    <h2>Morcaz Uloom</h2>
+
+    <p>
+      Celebrating a week programmes for 40 Years of Excellence in Islamic & Arabic Education
+    </p>
+
+    <img src="40y2.jpg" style="width:100%;border-radius:10px;margin-top:10px;">
+
+    <p>
+      Join us as we mark this great milestone tomorrow 🎊
+    </p>
+
+    <!-- EXTRA CONTENT FOR SCROLL -->
+    <p>📅 Date: Tomorrow April 6 2026</p>
+    <p>📍 Location: Ejigbo, Lagos</p>
+    <p>🎤 Prayers & less privilledge visitation </p>
+    <p>🎓 Student, Alumni & Memebers Gathering</p>
+    <p>🎉 Cultural Activities</p>
+
+    <p>
+      This event celebrates 40 years of knowledge, discipline and excellence.
+      All students, parents and alumni are invited.
+    </p>
+
+    <p>
+      Don’t miss this historic moment!
+    </p>
+
+  </div>
+
+</div>
+<script>
+  let examQuestions = []
+let examTimer
+let timeLeft = 1800
+let tabSwitchCount = 0
+let examStarted = false
+
+/* PAGE NAV */
+
+// SHOW POPUP ON PAGE LOAD
+window.onload = function(){
+
+document.getElementById("anniversaryPopup").style.display = "flex"
+
+}
+
+// CLOSE POPUP
+function closePopup(){
+
+document.getElementById("anniversaryPopup").style.display = "none"
+
+}
+
+function show(id){
+
+document.querySelectorAll("section").forEach(s=>s.style.display="none")
+
+document.getElementById(id).style.display="block"
+
+}
+
+function switchLang(lang){
+
+document.querySelectorAll("[data-en]").forEach(el=>{
+
+el.innerText = lang === "ar" ? el.dataset.ar : el.dataset.en
+
+})
+
+}
+function showStaff(id){
+
+document.querySelectorAll("#staffDashboard .content > div")
+.forEach(d=>d.style.display="none")
+
+document.getElementById(id).style.display="block"
+
+}
+
+function loadStaffInfo(){
+
+document.getElementById("staffWelcome").innerText =
+"Welcome "+localStorage.getItem("staffName")
+
+}
+
+
+let questionCount = 0
+
+function addQuestion(){
+
+questionCount++
+
+const container = document.getElementById("questionContainer")
+
+const html = `
+<div class="qBlock">
+
+<h3>Question ${questionCount}</h3>
+
+<textarea class="qText" placeholder="Question"></textarea>
+
+<input class="qa" placeholder="Option A">
+<input class="qb" placeholder="Option B">
+<input class="qc" placeholder="Option C">
+<input class="qd" placeholder="Option D">
+
+<select class="qAnswer">
+<option>A</option>
+<option>B</option>
+<option>C</option>
+<option>D</option>
+</select>
+
+<hr>
+
+</div>
+`
+
+container.insertAdjacentHTML("beforeend",html)
+
+}
+document.getElementById("qCourse").addEventListener("change",function(){
+
+if(this.value === "other"){
+document.getElementById("newCourse").style.display="block"
+}else{
+document.getElementById("newCourse").style.display="none"
+}
+
+})
+async function uploadAllQuestions(){
+
+let course = document.getElementById("qCourse").value
+const newCourse = document.getElementById("newCourse").value
+const className = document.getElementById("qClass").value
+
+if(course === "other" && newCourse !== ""){
+course = newCourse
+}
+
+const blocks = document.querySelectorAll(".qBlock")
+
+for(const block of blocks){
+
+const question = block.querySelector(".qText").value
+const a = block.querySelector(".qa").value
+const b = block.querySelector(".qb").value
+const c = block.querySelector(".qc").value
+const d = block.querySelector(".qd").value
+const answer = block.querySelector(".qAnswer").value
+
+await fetch("/staff/add-question",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+course,
+className,
+question,
+a,
+b,
+c,
+d,
+answer
+})
+})
+
+}
+
+alert("All questions uploaded successfully")
+
+}
+
+async function uploadResult(){
+
+const students = document
+.getElementById("resStudents")
+.value.split(",")
+.map(s => s.trim())
+.filter(s => s !== "")
+
+const subject=document.getElementById("resSubject").value
+const score=document.getElementById("resScore").value
+const className=document.getElementById("resClass").value
+const session=document.getElementById("resSession").value
+const term=document.getElementById("resTerm").value
+
+for(const id of students){
+
+await fetch("/admin/result",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+studentId:id,
+subject,
+score,
+className,
+session,
+term
+})
+})
+
+}
+
+alert("Results uploaded")
+
+}
+/* DASH NAV */
+
+function showDash(id){
+
+document.querySelectorAll(".content > div").forEach(d=>d.style.display="none")
+
+document.getElementById(id).style.display="block"
+
+}
+async function cbtLogin(){
+
+const id=document.getElementById("cbtID").value
+const pass=document.getElementById("cbtPass").value
+
+const res=await fetch("/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({studentId:id,password:pass})
+})
+
+const data=await res.json()
+
+if(data.error) return alert(data.error)
+
+document.querySelector(".login-box").style.display="none"
+document.getElementById("cbtPanel").style.display="block"
+
+loadCBTCourses()
+
+}
+async function loadCBTCourses(){
+  const courses = ["Fiqh","Tafsir","Hadith","Arabic Grammar","Others"];
+  let html = '<option value="">Select course</option>'; // optional placeholder
+  courses.forEach(c=>{
+    if(c === "Others"){
+      html += `<option value="other">${c}</option>`;
+    } else {
+      html += `<option>${c}</option>`;
+    }
+  });
+  document.getElementById("cbtCourse").innerHTML = html;
+}
+document.getElementById("cbtCourse").addEventListener("change",function(){
+
+if(this.value==="other"){
+document.getElementById("cbtOtherCourse").style.display="block"
+}else{
+document.getElementById("cbtOtherCourse").style.display="none"
+}
+
+})
+let time = 1800
+
+function startExam(){
+
+examStarted = true
+
+let course = document.getElementById("cbtCourse").value
+const other = document.getElementById("cbtOtherCourse").value
+const className = document.getElementById("cbtClass").value
+
+if(course==="other" && other!==""){
+course = other
+}
+
+loadQuestions(course,className)
+
+const timer=setInterval(()=>{
+
+time--
+
+document.getElementById("timer").innerText =
+"Time left: "+Math.floor(time/60)+":"+time%60
+
+if(time<=0){
+
+clearInterval(timer)
+
+alert("Time up!")
+
+}
+
+},1000)
+
+}
+async function loadQuestions(course,className){
+
+const res = await fetch(`/cbt/${course}/${className}`)
+
+examQuestions = await res.json()
+if(examQuestions.length===0){
+document.getElementById("questionBox").innerHTML="<h3>No questions uploaded</h3>"
+return
+}
+
+let html=""
+
+examQuestions.forEach((q,i)=>{
+
+html+=`
+
+<div>
+
+<h4>${i+1}. ${q.question}</h4>
+
+<label><input type="radio" name="q${i}" value="A"> ${q.option_a}</label><br>
+<label><input type="radio" name="q${i}" value="B"> ${q.option_b}</label><br>
+<label><input type="radio" name="q${i}" value="C"> ${q.option_c}</label><br>
+<label><input type="radio" name="q${i}" value="D"> ${q.option_d}</label>
+
+</div>
+<hr>
+
+`
+})
+
+html+=`<button onclick="submitExam()">Submit Exam</button>`
+
+document.getElementById("questionBox").innerHTML=html
+
+startTimer()
+}
+function startTimer(){
+
+examTimer = setInterval(()=>{
+
+timeLeft--
+
+let min = Math.floor(timeLeft/60)
+let sec = timeLeft % 60
+
+document.getElementById("timer").innerText =
+"Time left: "+min+":"+(sec<10?"0":"")+sec
+
+if(timeLeft<=0){
+
+clearInterval(examTimer)
+
+alert("Time Up! Submitting exam")
+
+submitExam()
+
+}
+
+},1000)
+
+}
+async function submitExam(){
+
+clearInterval(examTimer)
+
+let score = 0
+
+examQuestions.forEach((q,i)=>{
+
+let ans = document.querySelector(`input[name="q${i}"]:checked`)
+
+if(ans && ans.value === q.answer){
+score++
+}
+
+})
+
+let percent = Math.round((score/examQuestions.length)*100)
+
+const student = localStorage.getItem("student")
+const course = document.getElementById("cbtCourse").value
+
+await fetch("/cbt/save-result",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+studentId:student,
+course,
+score
+})
+})
+
+document.getElementById("questionBox").innerHTML=`
+
+<h2>Exam Submitted</h2>
+
+<h3>Your Score: ${score}/${examQuestions.length}</h3>
+
+<h2>${percent}%</h2>
+
+`
+}
+document.addEventListener("visibilitychange",()=>{
+
+if(!examStarted) return
+
+if(document.hidden){
+
+tabSwitchCount++
+
+alert("Warning: Tab switching detected!")
+
+if(tabSwitchCount >= 3){
+
+alert("Exam terminated due to cheating!")
+
+submitExam()
+
+}
+
+}
+
+})
+
+/* SLIDER */
+
+let images=["pics1.jpg","pics3.jpg","founder2.jpg", "morcaz pics.jpg"]
+
+let i=0
+
+setInterval(()=>{
+
+i++
+
+if(i>=images.length) i=0
+
+document.getElementById("slide").src=images[i]
+
+},3000)
+
+
+/* APPLICATION */
+
+/* APPLICATION + PAYMENT */
+
+document.getElementById("applyForm").onsubmit = async e => {
+
+e.preventDefault()
+
+const email = document.getElementById("email").value
+
+const tx_ref = "FORM" + Date.now()
+
+FlutterwaveCheckout({
+
+public_key:"FLWPUBK_TEST-ac4fea68220411dd1922bdd4b2e714bc-X",
+
+tx_ref: tx_ref,
+
+amount:5000,
+
+currency:"NGN",
+
+customer:{
+email: email
+},
+
+callback: async function(payment){
+
+const formData = new FormData()
+
+;["name","email","gender","nin","origin","residence","phone","prevschool","class","parent"].forEach(f=>{
+
+formData.append(f,document.getElementById(f).value)
+
+})
+
+formData.append("passport",document.getElementById("passport").files[0])
+
+formData.append("reference", tx_ref)
+
+const res = await fetch("/apply",{
+method:"POST",
+body:formData
+})
+
+const data = await res.json()
+
+document.getElementById("applyMsg").innerHTML = data.message
+
+},
+
+onclose:function(){
+alert("Payment cancelled")
+}
+
+})
+
+}
+/* OTHER PAYMENTS */
+
+async function pay(amount,type){
+
+const student = localStorage.getItem("student")
+
+FlutterwaveCheckout({
+
+public_key:"FLWPUBK_TEST-ac4fea68220411dd1922bdd4b2e714bc-X",
+
+tx_ref:"MRZ"+Date.now(),
+
+amount:amount,
+
+currency:"NGN",
+
+customer:{
+email:"student@email.com"
+},
+
+callback:async function(data){
+
+await fetch("/save-payment",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+studentId:student,
+type:type,
+amount:amount,
+reference:data.transaction_id
+})
+})
+
+alert("Payment recorded")
+
+}
+
+})
+
+}
+/* LOGIN */
+
+document.getElementById("loginForm").onsubmit=async e=>{
+
+e.preventDefault()
+
+const studentId=document.getElementById("studentid").value
+
+const password=document.getElementById("password").value
+
+const res=await fetch("/login",{
+
+method:"POST",
+
+headers:{"Content-Type":"application/json"},
+
+body:JSON.stringify({studentId,password})
+
+})
+
+const data=await res.json()
+
+if(data.error) alert(data.error)
+
+else{
+
+localStorage.setItem("student",studentId)
+
+document.getElementById("studentName").innerText=data.name
+
+document.getElementById("passportDisplay").src=data.passport
+
+document.getElementById("studentID").innerText=studentId
+document.getElementById("studentClass").innerText = data.class
+document.getElementById("studentEmail").innerText = data.email
+
+show("dashboard")
+loadCourses()
+showHistory()
+
+}
+
+}
+
+document.getElementById("staffRegisterForm").onsubmit = async e => {
+  e.preventDefault();
+
+  const full_name = document.getElementById("staffFullName").value;
+  const username = document.getElementById("staffUsername").value;
+  const course = document.getElementById("staffCourse").value;
+
+  const res = await fetch("/staff/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ full_name, username, course })
+  });
+
+  const data = await res.json();
+
+  if(data.error){
+    document.getElementById("staffRegisterMsg").innerText = data.error;
+  } else {
+    document.getElementById("staffRegisterMsg").innerText =
+"Staff registration successful. Login with your username and the fixed password.";
+  }
+};
+async function staffLogin(){
+
+const username = document.getElementById("staffUser").value
+const password = document.getElementById("staffPass").value
+
+const res = await fetch("/staff-login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username,password})
+})
+
+const data = await res.json()
+
+if(data.error){
+alert(data.error)
+return
+}
+
+// save staff session
+localStorage.setItem("staffName",data.name)
+localStorage.setItem("staffCourse",data.course)
+
+// redirect to dashboard
+show("staffDashboard")
+
+loadStaffInfo()
+
+}
+document.getElementById("courseForm").onsubmit = async e =>{
+
+e.preventDefault()
+
+const student = localStorage.getItem("student")
+
+const checked = document.querySelectorAll("#courseForm input:checked")
+
+for(const c of checked){
+
+await fetch("/register-course",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+studentId:student,
+course:c.value
+})
+})
+
+}
+
+alert("Courses registered")
+
+loadCourses()
+
+}
+async function loadCourses(){
+
+const id = localStorage.getItem("student")
+
+const res = await fetch("/courses/"+id)
+
+const data = await res.json()
+
+let html="<h3>Registered Courses</h3><ul>"
+
+data.forEach(c=>{
+html+="<li>"+c.course_name+"</li>"
+})
+
+html+="</ul>"
+
+document.getElementById("coursesList").innerHTML=html
+
+}
+async function printCourses(){
+
+const id = localStorage.getItem("student")
+
+const res = await fetch("/courses/"+id)
+
+const courses = await res.json()
+
+if(!courses.length){
+alert("No courses registered yet")
+return
+}
+
+let html="<h2>Registered Courses</h2><ul>"
+
+courses.forEach(c=>{
+html+="<li>"+c.course_name+"</li>"
+})
+
+html+="</ul>"
+
+const w=window.open()
+
+w.document.write(html)
+
+w.print()
+
+}
+
+async function checkResult(){
+
+const id = localStorage.getItem("student")
+const session = document.getElementById("session").value
+const term = document.getElementById("semester").value
+
+const res = await fetch(`/result/${id}?session=${session}&term=${term}`)
+const data = await res.json()
+
+if(!data || data.length === 0){
+
+document.getElementById("resultBox").innerHTML =
+"<p>No result found for selected session and term.</p>"
+
+return
+
+}
+
+let html="<table><tr><th>Subject</th><th>Score</th><th>Grade</th><th>Status</th></tr>"
+
+data.forEach(r=>{
+
+let grade=""
+let status=""
+
+if(r.score >= 80){
+grade="AA"
+status="PASS"
+}
+else if(r.score >= 70){
+grade="A"
+status="PASS"
+}
+else if(r.score >= 60){
+grade="B"
+status="PASS"
+}
+else if(r.score >= 50){
+grade="C"
+status="PASS"
+}
+else{
+grade="F"
+status="FAIL"
+}
+
+html+=`
+<tr>
+<td>${r.subject}</td>
+<td>${r.score}</td>
+<td>${grade}</td>
+<td>${status}</td>
+</tr>
+`
+
+})
+
+html+="</table>"
+
+document.getElementById("resultBox").innerHTML=html
+
+}
+function showAcademic(id){
+
+document.getElementById("courses").style.display="none"
+document.getElementById("results").style.display="none"
+
+document.getElementById(id).style.display="block"
+
+}
+
+/* PAYMENTS */
+
+function paymentType(type){
+
+const box=document.getElementById("paymentBox")
+
+if(type==="School Fees"){
+
+box.innerHTML=`<button onclick="pay(50000,'School Fees')">Pay School Fees</button>`
+
+}
+
+if(type==="Other Payments"){
+
+box.innerHTML=`
+<button onclick="pay(5000,'Exam Fee')">Exam Fees</button>
+<button onclick="pay(20000,'Hostel Fee')">Hostel Fees</button>
+`
+
+}
+
+if(type==="Payment History"){
+
+showHistory()
+
+}
+
+}
+async function showHistory(){
+
+const id = localStorage.getItem("student")
+
+const res = await fetch("/payment-history/"+id)
+
+const data = await res.json()
+
+let html="<table><tr><th>Type</th><th>Amount</th><th>Date</th></tr>"
+
+if(data.length === 0){
+
+html += "<tr><td colspan='3'>No payment history</td></tr>"
+
+}else{
+
+data.forEach(p=>{
+html+=`<tr>
+<td>${p.payment_type}</td>
+<td>${p.amount}</td>
+<td>${new Date(p.date).toLocaleDateString()}</td>
+</tr>`
+})
+
+}
+
+html+="</table>"
+
+document.getElementById("paymentBox").innerHTML=html
+
+}
+
+
+const toggle = document.getElementById("langToggle")
+const label = document.getElementById("langLabel")
+
+toggle.addEventListener("change", () => {
+
+if(toggle.checked){
+
+label.innerText = "AR"
+translatePage("ar")
+
+}else{
+
+label.innerText = "EN"
+translatePage("en")
+
+}
+
+})
+
+async function translatePage(lang){
+
+const elements = document.querySelectorAll("h1,h2,h3,p,a,button,label")
+
+for(const el of elements){
+
+const text = el.innerText
+
+if(text.trim().length === 0) continue
+
+const res = await fetch(
+"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl="+lang+"&dt=t&q="+encodeURIComponent(text)
+)
+
+const data = await res.json()
+
+el.innerText = data[0][0][0]
+
+}
+
+}
+async function showChangePassword(){
+
+const newPass = prompt("Enter new password")
+
+const student = localStorage.getItem("student")
+
+await fetch("/change-password",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+studentId:student,
+newPassword:newPass
+})
+})
+
+alert("Password updated")
+
+}
+
+
+/* LOGOUT */
+
+function logout(){
+
+localStorage.clear()
+
+show("login")
+
+}
+
+</script>
+
+</body>
+</html>
