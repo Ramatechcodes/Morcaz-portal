@@ -28,105 +28,101 @@ app.get("/", (req, res) => {
 
 // ================= EMAIL SYSTEM =================
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // TLS
+  service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 });
-
 // ================= APPLICATION =================
 app.post("/apply", upload.single("passport"), async (req, res) => {
+  const data = req.body;
+  const reference = data.reference;
 
-const data = req.body
-const reference = data.reference
+  try {
+    // Check if student already exists (by email or NIN)
+    const { data: existing, error } = await supabase
+      .from("students")
+      .select("*")
+      .or(`email.eq.${data.email},nin.eq.${data.nin}`)
+      .maybeSingle();
 
-try{
+    if (existing) {
+      return res.json({
+        message: "You have already applied. Use your Student ID to login."
+      });
+    }
 
-// VERIFY PAYMENT
-const verify = await axios.get(
-`https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${reference}`,
-{
-headers:{
-Authorization:`Bearer ${process.env.FLUTTERWAVE_SECRET}`
-}
-})
+    // VERIFY PAYMENT
+    const verify = await axios.get(
+      `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${reference}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.FLUTTERWAVE_SECRET}`,
+        },
+      }
+    );
 
-if(verify.data.status !== "success"){
-return res.json({message:"Payment not verified"})
-}
+    if (verify.data.status !== "success") {
+      return res.json({ message: "Payment not verified" });
+    }
 
-// Upload passport
-let passportUrl=null
+    // Upload passport
+    let passportUrl = null;
+    if (req.file) {
+      const fileName = Date.now() + "_" + req.file.originalname;
 
-if(req.file){
-const fileName=Date.now()+"_"+req.file.originalname
+      await supabase.storage.from("passports").upload(fileName, req.file.buffer);
 
-await supabase.storage
-.from("passports")
-.upload(fileName,req.file.buffer)
+      passportUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/passports/${fileName}`;
+    }
 
-passportUrl=`${process.env.SUPABASE_URL}/storage/v1/object/public/passports/${fileName}`
-}
+    // Generate Student ID & password
+    const studentId = "MRZ" + Math.floor(10000 + Math.random() * 90000);
+    const passwordPlain = Math.random().toString(36).slice(-8);
+    const hashed = await bcrypt.hash(passwordPlain, 10);
 
-// Generate ID
-const studentId="MRZ"+Math.floor(10000+Math.random()*90000)
+    // Save new student
+    await supabase.from("students").insert([
+      {
+        full_name: data.name,
+        email: data.email,
+        phone: data.phone,
+        nin: data.nin,
+        state_origin: data.origin,
+        state_residence: data.residence,
+        previous_school: data.prevschool,
+        class_applying: data.class,
+        parent_name: data.parent,
+        passport: passportUrl,
+        student_id: studentId,
+        password: hashed,
+        payment_status: true,
+      },
+    ]);
 
-// Generate password
-const passwordPlain=Math.random().toString(36).slice(-8)
-
-const hashed=await bcrypt.hash(passwordPlain,10)
-
-// Save student
-await supabase.from("students").insert([{
-
-full_name:data.name,
-email:data.email,
-phone:data.phone,
-nin:data.nin,
-state_origin:data.origin,
-state_residence:data.residence,
-previous_school:data.prevschool,
-class_applying:data.class,
-parent_name:data.parent,
-passport:passportUrl,
-student_id:studentId,
-password:hashed,
-payment_status:true
-
-}])
-
-// SEND EMAIL
-await transporter.sendMail({
-
-from:process.env.EMAIL_USER,
-to:data.email,
-subject:"Morcaz Uloom Student Portal Login",
-
-text:`Welcome to Morcaz Uloom Portal
+    // SEND EMAIL
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: data.email,
+      subject: "Morcaz Uloom Student Portal Login",
+      text: `Welcome to Morcaz Uloom Portal
 
 Student ID: ${studentId}
 Password: ${passwordPlain}
 
-Login here: https://morcaz-uloom-ejigbo-ng.onrender.com`
+Login here: http://localhost:5000`,
+    });
 
-})
-
-res.json({
-message:"Application successful. Login details sent to email."
-})
-
-}catch(err){
-
-console.log(err)
-
-res.json({message:"Application failed"})
-
-}
-
-})// ================= PAYMENT VERIFY =================
+    res.json({
+      message: "Application successful. Login details sent to email.",
+    });
+  } catch (err) {
+    console.log(err);
+    res.json({ message: "Application failed" });
+  }
+});
+// ================= PAYMENT VERIFY =================
 app.post("/verify-payment", async (req, res) => {
   const { reference, email } = req.body;
 
