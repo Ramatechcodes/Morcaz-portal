@@ -28,10 +28,12 @@ app.get("/", (req, res) => {
 
 // ================= EMAIL SYSTEM =================
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
@@ -43,10 +45,10 @@ app.post("/apply", upload.single("passport"), async (req, res) => {
   try {
     // CHECK IF STUDENT ALREADY EXISTS
     const { data: existingStudent } = await supabase
-      .from("students")
-      .select("*")
-      .eq("email", data.email)
-      .maybeSingle();
+  .from("students")
+  .select("*")
+  .eq("email", data.email)
+  .maybeSingle();
 
     if (existingStudent) {
       return res.json({
@@ -110,7 +112,7 @@ payment_status:true
 
 // SEND EMAIL
 await transporter.sendMail({
-  from: process.env.EMAIL_USER,
+from: `"Morcaz Uloom" <${process.env.SMTP_USER}>`,
   to: data.email,
   subject: "Morcaz Uloom Student Portal Login",
   text: `Welcome to Morcaz Uloom Portal!
