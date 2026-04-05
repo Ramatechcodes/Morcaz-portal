@@ -37,11 +37,23 @@ const transporter = nodemailer.createTransport({
 
 // ================= APPLICATION =================
 app.post("/apply", upload.single("passport"), async (req, res) => {
+  const data = req.body;
+  const reference = data.reference;
 
-const data = req.body
-const reference = data.reference
+  try {
+    // CHECK IF STUDENT ALREADY EXISTS
+    const { data: existingStudent } = await supabase
+      .from("students")
+      .select("*")
+      .eq("email", data.email)
+      .maybeSingle();
 
-try{
+    if (existingStudent) {
+      return res.json({
+        message: `You have already applied. Your Student ID is ${existingStudent.student_id}. Please login.`
+      });
+    }
+
 
 // VERIFY PAYMENT
 const verify = await axios.get(
@@ -98,17 +110,15 @@ payment_status:true
 
 // SEND EMAIL
 await transporter.sendMail({
-
-from:process.env.EMAIL_USER,
-to:data.email,
-subject:"Morcaz Uloom Student Portal Login",
-
-text:`Welcome to Morcaz Uloom Portal
+  from: process.env.EMAIL_USER,
+  to: data.email,
+  subject: "Morcaz Uloom Student Portal Login",
+  text: `Welcome to Morcaz Uloom Portal!
 
 Student ID: ${studentId}
 Password: ${passwordPlain}
 
-Login here:
+Login here: 
 http://localhost:5000`
 
 })
