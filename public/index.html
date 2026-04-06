@@ -1305,8 +1305,16 @@ document.getElementById("slide").src=images[i]
 document.getElementById("applyForm").onsubmit = async e => {
 
 e.preventDefault()
+      const email = document.getElementById("email").value;
+  const nin = document.getElementById("nin").value;
+const checkExisting = await fetch(`/check-student?email=${email}&nin=${document.getElementById("nin").value}`);
+const checkData = await checkExisting.json();
 
-const email = document.getElementById("email").value
+if(checkData.exists){
+  alert(`You already applied. Your Student ID: ${checkData.student_id}. Please login.`);
+  return; // stop the form submission
+}
+
 
 const tx_ref = "FORM" + Date.now()
 
