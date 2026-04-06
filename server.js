@@ -44,18 +44,16 @@ app.post("/apply", upload.single("passport"), async (req, res) => {
 
   try {
     // CHECK IF STUDENT ALREADY EXISTS
-    const { data: existingStudent } = await supabase
+  const { data: existingStudent } = await supabase
   .from("students")
   .select("*")
-  .eq("email", data.email)
+.or(`email.eq.${data.email}${data.nin ? `,nin.eq.${data.nin}` : ""}`)
   .maybeSingle();
-
     if (existingStudent) {
-      return res.json({
-        message: `You have already applied. Your Student ID is ${existingStudent.student_id}. Please login.`
-      });
-    }
-
+  return res.json({
+    message: `You already applied. Your Student ID is ${existingStudent.student_id}. Please login instead.`
+  });
+}
 
 // VERIFY PAYMENT
 const verify = await axios.get(
@@ -95,51 +93,55 @@ const hashed=await bcrypt.hash(passwordPlain,10)
 const { error: insertError } = await supabase
   .from("students")
   .insert([{
+    full_name:data.name,
+    email:data.email,
+    phone:data.phone,
+    nin:data.nin,
+    state_origin:data.origin,
+    state_residence:data.residence,
+    previous_school:data.prevschool,
+    class_applying:data.class,
+    parent_name:data.parent,
+    passport:passportUrl,
+    student_id:studentId,
+    password:hashed,
+    payment_status:true
+  }]);
 
-full_name:data.name,
-email:data.email,
-phone:data.phone,
-nin:data.nin,
-state_origin:data.origin,
-state_residence:data.residence,
-previous_school:data.prevschool,
-class_applying:data.class,
-parent_name:data.parent,
-passport:passportUrl,
-student_id:studentId,
-password:hashed,
-payment_status:true
-
-}])
-
+if(insertError){
+  console.log("INSERT ERROR:", insertError);
+  return res.json({ message: "Failed to save student" });
+}
 // SEND EMAIL
-await transporter.sendMail({
-from: `"Morcaz Uloom" <${process.env.SMTP_USER}>`,
-  to: data.email,
-  subject: "Morcaz Uloom Student Portal Login",
-  text: `Welcome to Morcaz Uloom Portal!
+let emailSent = true;
+
+try {
+  await transporter.sendMail({
+    from: `"Morcaz Uloom" <${process.env.SMTP_USER}>`,
+    to: data.email,
+    subject: "Morcaz Uloom Student Portal Login",
+    text: `Welcome!
 
 Student ID: ${studentId}
 Password: ${passwordPlain}
 
-Login here: 
-http://morcaz-uloom-ejigbo-ng.onrender.com`
-
-})
-
-res.json({
-message:"Application successful. Login details sent to email."
-})
-
-}catch(err){
-
-console.log(err)
-
-res.json({message:"Application failed"})
-
+Login: https://morcaz-uloom-ejigbo-ng.onrender.com/`
+  });
+} catch (emailError) {
+  console.log("EMAIL ERROR:", emailError);
+  emailSent = false;
 }
 
-})
+    res.json({
+  message: emailSent
+    ? "Application successful. Login details sent to email."
+    : `Application successful BUT email failed. Your Student ID: ${studentId}`
+});
+  } catch (err) {
+    console.error("APPLICATION ERROR:", err);
+    res.status(500).json({ message: "Failed to process application" });
+  }
+}); // ✅ CLOSE /apply ROUTE HERE
 // ================= PAYMENT VERIFY =================
 app.post("/verify-payment", async (req, res) => {
   const { reference, email } = req.body;
