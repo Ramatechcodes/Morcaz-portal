@@ -1303,20 +1303,24 @@ document.getElementById("slide").src=images[i]
 /* APPLICATION + PAYMENT */
 
 document.getElementById("applyForm").onsubmit = async e => {
+  e.preventDefault();
 
-e.preventDefault()
-      const email = document.getElementById("email").value;
-  const nin = document.getElementById("nin").value;
-const checkExisting = await fetch(`/check-student?email=${email}&nin=${document.getElementById("nin").value}`);
-const checkData = await checkExisting.json();
+  // 1️⃣ Get values from form and normalize
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const nin = document.getElementById("nin").value.trim();
 
-if(checkData.exists){
-  alert(`You already applied. Your Student ID: ${checkData.student_id}. Please login.`);
-  return; // stop the form submission
-}
+  // 2️⃣ Check existing student
+  const checkExisting = await fetch(`/check-student?email=${email}&nin=${nin}`);
+  const checkData = await checkExisting.json();
 
+  if(checkData.exists){
+    alert(`You already applied. Your Student ID: ${checkData.student_id}. Please login.`);
+    return; // stop the form submission
+  }
 
-const tx_ref = "FORM" + Date.now()
+  // 3️⃣ If not exists, proceed with Flutterwave payment
+  const tx_ref = "FORM" + Date.now();
+
 
 FlutterwaveCheckout({
 
