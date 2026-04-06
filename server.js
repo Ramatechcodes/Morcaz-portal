@@ -51,6 +51,34 @@ async function sendEmail(to, subject, text) {
   }
 }
 
+// ================= CHECK STUDENT (for frontend pre-check) =================
+app.get("/check-student", async (req, res) => {
+  const { email, nin } = req.query;
+
+  try {
+    const orQuery = nin ? `email.eq.${email},nin.eq.${nin}` : `email.eq.${email}`;
+    const { data: student, error } = await supabase
+      .from("students")
+      .select("*")
+      .or(orQuery)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Supabase OR error:", error);
+      return res.status(500).json({ exists: false });
+    }
+
+    if (student) {
+      return res.json({ exists: true, student_id: student.student_id });
+    }
+
+    res.json({ exists: false });
+  } catch (err) {
+    console.error("Check student error:", err);
+    res.status(500).json({ exists: false });
+  }
+});
+
 // ================= APPLICATION =================
 app.post("/apply", upload.single("passport"), async (req, res) => {
   const data = req.body;
@@ -78,19 +106,6 @@ if (existingStudent) {
     message: `You already applied. Your Student ID is ${existingStudent.student_id}. Please login instead.`
   });
 }
-
-    app.get("/check-student", async (req,res)=>{
-  const { email, nin } = req.query;
-
-  const orQuery = nin ? `email.eq.${email},nin.eq.${nin}` : `email.eq.${email}`;
-  const { data: student } = await supabase.from("students").select("*").or(orQuery).maybeSingle();
-
-  if(student){
-    return res.json({ exists:true, student_id: student.student_id });
-  }
-  res.json({ exists:false });
-});
-
 // VERIFY PAYMENT
 const verify = await axios.get(
   `https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=${reference}`,
