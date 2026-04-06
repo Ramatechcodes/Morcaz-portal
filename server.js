@@ -27,15 +27,29 @@ app.get("/", (req, res) => {
 });
 
 // ================= EMAIL SYSTEM =================
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+async function sendEmail(to, subject, text) {
+  try {
+    const res = await axios.post(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: { name: "Ramatechcode", email: "ramatechcode14@gmail.com" },
+        to: [{ email: to }],
+        subject,
+        textContent: text
+      },
+      {
+        headers: {
+          "api-key": process.env.BREVO_API_KEY,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+    console.log("Email sent:", res.data);
+  } catch (err) {
+    console.error("EMAIL ERROR:", err.response?.data || err.message);
+    throw err;
+  }
+}
 
 // ================= APPLICATION =================
 app.post("/apply", upload.single("passport"), async (req, res) => {
@@ -116,22 +130,15 @@ if(insertError){
 let emailSent = true;
 
 try {
-  await transporter.sendMail({
-    from: `"Morcaz Uloom" <${process.env.SMTP_USER}>`,
-    to: data.email,
-    subject: "Morcaz Uloom Student Portal Login",
-    text: `Welcome!
-
-Student ID: ${studentId}
-Password: ${passwordPlain}
-
-Login: https://morcaz-uloom-ejigbo-ng.onrender.com/`
-  });
+  await sendEmail(
+    data.email,
+    "Morcaz Uloom Student Portal Login",
+    `Welcome!\n\nStudent ID: ${studentId}\nPassword: ${passwordPlain}\n\nLogin: https://morcaz-uloom-ejigbo-ng.onrender.com/`
+  );
 } catch (emailError) {
   console.log("EMAIL ERROR:", emailError);
   emailSent = false;
 }
-
     res.json({
   message: emailSent
     ? "Application successful. Login details sent to email."
