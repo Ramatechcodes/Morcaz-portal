@@ -58,16 +58,38 @@ app.post("/apply", upload.single("passport"), async (req, res) => {
 
   try {
     // CHECK IF STUDENT ALREADY EXISTS
-  const { data: existingStudent } = await supabase
+// Check if student already exists
+const orQuery = data.nin
+  ? `email.eq.${data.email},nin.eq.${data.nin}`
+  : `email.eq.${data.email}`;
+
+const { data: existingStudent, error } = await supabase
   .from("students")
   .select("*")
-.or(`email.eq.${data.email}${data.nin ? `,nin.eq.${data.nin}` : ""}`)
+  .or(orQuery)
   .maybeSingle();
-    if (existingStudent) {
+
+if (error) {
+  console.error("Supabase OR error:", error);
+}
+
+if (existingStudent) {
   return res.json({
     message: `You already applied. Your Student ID is ${existingStudent.student_id}. Please login instead.`
   });
 }
+
+    app.get("/check-student", async (req,res)=>{
+  const { email, nin } = req.query;
+
+  const orQuery = nin ? `email.eq.${email},nin.eq.${nin}` : `email.eq.${email}`;
+  const { data: student } = await supabase.from("students").select("*").or(orQuery).maybeSingle();
+
+  if(student){
+    return res.json({ exists:true, student_id: student.student_id });
+  }
+  res.json({ exists:false });
+});
 
 // VERIFY PAYMENT
 const verify = await axios.get(
